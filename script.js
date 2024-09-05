@@ -10,16 +10,17 @@ const puppeteer = require('puppeteer');
 
   // URL da página que você deseja acessar
   const url = 'https://www.glassdoor.com.br/Avaliações/JTI-Japan-Tobacco-International-Avaliações-E6359.htm';
-  
-  // Interceptar as requisições para obter o código de resposta
+
+  // Interceptar e capturar a resposta
   page.on('response', response => {
     if (response.url() === url) {
       console.log(`Código de resposta: ${response.status()}`);
     }
   });
 
-  // Acessar a página
-  await page.goto(url);
+  // Acessar a página e capturar o código de resposta
+  const response = await page.goto(url);
+  console.log(`Código de resposta após goto: ${response.status()}`);
 
   // Usar um timeout para garantir que a página tenha tempo para carregar
   await new Promise(resolve => setTimeout(resolve, 5000));  // Aguarda 5 segundos
