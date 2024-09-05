@@ -9,10 +9,25 @@ const puppeteer = require('puppeteer');
   const page = await browser.newPage();
 
   // URL da página que você deseja acessar
-  await page.goto('https://www.glassdoor.com.br/Avaliações/JTI-Japan-Tobacco-International-Avaliações-E6359.htm');
+  const url = 'https://www.glassdoor.com.br/Avaliações/JTI-Japan-Tobacco-International-Avaliações-E6359.htm';
+  
+  // Interceptar as requisições para obter o código de resposta
+  page.on('response', response => {
+    if (response.url() === url) {
+      console.log(`Código de resposta: ${response.status()}`);
+    }
+  });
+
+  // Acessar a página
+  await page.goto(url);
 
   // Usar um timeout para garantir que a página tenha tempo para carregar
   await new Promise(resolve => setTimeout(resolve, 5000));  // Aguarda 5 segundos
+
+  // Obter o conteúdo HTML da página
+  const htmlContent = await page.content();
+  console.log("Conteúdo HTML:");
+  console.log(htmlContent);
 
   // Executar XPath diretamente na página
   const text = await page.evaluate(() => {
