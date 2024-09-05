@@ -11,19 +11,19 @@ const puppeteer = require('puppeteer');
   // URL da página que você deseja acessar
   await page.goto('https://www.glassdoor.com.br/Avaliações/JTI-Japan-Tobacco-International-Avaliações-E6359.htm');
 
-  // Esperar até que o conteúdo esteja carregado
-  await page.waitForTimeout(5000);  // Ajuste o tempo conforme necessário para garantir que o conteúdo esteja carregado
+  // Usar um timeout para garantir que a página tenha tempo para carregar
+  await new Promise(resolve => setTimeout(resolve, 5000));  // Aguarda 5 segundos
 
-  // Encontrar o elemento pelo XPath
-  const [element] = await page.$x('/html/body/div[3]/div[1]/div[2]/main/div/div[1]/div[1]/p[1]');
-  
-  if (element) {
-    // Extrair e imprimir o texto do elemento
-    const text = await page.evaluate(el => el.textContent, element);
-    console.log("Texto encontrado:", text);
-  } else {
-    console.log("Elemento não encontrado.");
-  }
+  // Executar XPath diretamente na página
+  const text = await page.evaluate(() => {
+    const xpath = '/html/body/div[3]/div[1]/div[2]/main/div/div[1]/div[1]/p[1]';
+    const result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+    const element = result.singleNodeValue;
+    return element ? element.textContent : 'Elemento não encontrado';
+  });
+
+  // Imprimir o texto encontrado
+  console.log("Texto encontrado:", text);
 
   // Fechar o navegador
   await browser.close();
